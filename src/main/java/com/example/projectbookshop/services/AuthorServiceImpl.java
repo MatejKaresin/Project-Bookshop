@@ -30,7 +30,7 @@ public class AuthorServiceImpl implements AuthorService {
         List<AuthorDTO> dtos = new ArrayList<>();
 
         for(Author author : authors){
-            List<String> books = null;
+            List<String> books = new ArrayList<>();
             for(Book book : author.getBooks()){
                 books.add(book.getName());
             }
@@ -54,7 +54,7 @@ public class AuthorServiceImpl implements AuthorService {
         Author author = authorRepository.findById(authorId).orElseThrow( () -> new NotFoundException("Author with id: " +
                 authorId + " doesn't exist"));
 
-        List<String> books = null;
+        List<String> books = new ArrayList<>();
         for(Book book : author.getBooks()){
             books.add(book.getName());
         }

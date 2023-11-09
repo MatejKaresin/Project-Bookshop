@@ -23,7 +23,7 @@ public class Author {
     private String lastName;
     private Integer age;
 
-    @OneToMany(mappedBy = "author", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "author", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Book> books;
 
 

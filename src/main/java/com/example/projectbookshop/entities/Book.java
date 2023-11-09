@@ -20,7 +20,7 @@ public class Book {
     private Integer numberOfPages;
     private BigDecimal price;
 
-    @ManyToOne(cascade = CascadeType.ALL)
+    @ManyToOne
     @JoinColumn(name = "author_id")
     private Author author;
 }
