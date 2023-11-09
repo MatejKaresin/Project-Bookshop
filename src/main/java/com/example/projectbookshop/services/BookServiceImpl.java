@@ -8,6 +8,7 @@ import com.example.projectbookshop.repositories.AuthorRepository;
 import com.example.projectbookshop.repositories.BookRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.util.StringUtils;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -47,7 +48,12 @@ public class BookServiceImpl implements BookService {
     @Override
     public BookDTO createBookToAuthor(Long authorId, BookDTO bookDTO) throws NotFoundException {
         Author author = authorRepository.findById(authorId).orElseThrow( () -> new NotFoundException("Author with" +
-                "id: " + authorId + " doesn't exists"));
+                " id: " + authorId + " doesn't exists"));
+
+        Book exists = bookRepository.findByName(bookDTO.getName());
+        if(exists != null){
+            throw new IllegalStateException("Book by name " + bookDTO.getName() + " already exists");
+        }
 
         Book book = Book.builder()
                 .author(author)
@@ -74,5 +80,33 @@ public class BookServiceImpl implements BookService {
         Book book = bookRepository.findById(bookId).orElseThrow( () -> new NotFoundException("Book with id: " +
                 bookId + " doesn't exist"));
         bookRepository.delete(book);
+    }
+
+    @Override
+    public BookDTO modifyBookById(Long bookId, BookDTO bookDTO) throws NotFoundException {
+        Book book = bookRepository.findById(bookId).orElseThrow(() -> new NotFoundException("Book with id: " +
+                bookId + " doesn't exist"));
+
+        if(StringUtils.hasText(bookDTO.getName())){
+            book.setName(bookDTO.getName());
+        }
+        if(bookDTO.getPrice() != null){
+            book.setPrice(bookDTO.getPrice());
+        }
+        if(bookDTO.getNumberOfPages() != null){
+            book.setNumberOfPages(bookDTO.getNumberOfPages());
+        }
+
+        Book saved = bookRepository.save(book);
+
+        BookDTO dto = BookDTO.builder()
+                .name(saved.getName())
+                .numberOfPages(saved.getNumberOfPages())
+                .id(saved.getId())
+                .authorFullName(saved.getAuthor().getFirstName() + " " + saved.getAuthor().getLastName())
+                .price(saved.getPrice())
+                .build();
+
+        return dto;
     }
 }

@@ -13,4 +13,6 @@ public interface AuthorService {
     void deleteAuthorById(Long authorId) throws NotFoundException;
 
     AuthorDTO getAuthorById(Long authorId) throws NotFoundException;
+
+    AuthorDTO modifyAuthor(Long authorId, AuthorDTO authorDTO) throws NotFoundException;
 }

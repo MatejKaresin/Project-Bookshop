@@ -12,4 +12,6 @@ public interface BookService {
     BookDTO createBookToAuthor(Long authorId, BookDTO bookDTO) throws NotFoundException;
 
     void deleteBookById(Long bookId) throws NotFoundException;
+
+    BookDTO modifyBookById(Long bookId, BookDTO bookDTO) throws NotFoundException;
 }

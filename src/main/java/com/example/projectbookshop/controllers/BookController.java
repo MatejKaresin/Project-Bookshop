@@ -35,4 +35,10 @@ public class BookController {
         bookService.deleteBookById(bookId);
     }
 
+    @PutMapping("/books/modify/{bookId}")
+    public BookDTO updateBook(@PathVariable("bookId") Long bookId,
+                           @RequestBody BookDTO bookDTO) throws NotFoundException {
+        return bookService.modifyBookById(bookId, bookDTO);
+    }
+
 }

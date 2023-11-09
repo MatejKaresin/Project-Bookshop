@@ -41,5 +41,11 @@ public class AuthorController {
         authorService.deleteAuthorById(authorId);
     }
 
+    @PutMapping("/authors/modify/{authorId}")
+    public AuthorDTO updateAuthor(@PathVariable("authorId") Long authorId,
+                                  @RequestBody AuthorDTO authorDTO) throws NotFoundException {
+        return authorService.modifyAuthor(authorId, authorDTO);
+    }
+
 
 }

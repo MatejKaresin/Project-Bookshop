@@ -8,6 +8,7 @@ import com.example.projectbookshop.repositories.AuthorRepository;
 import lombok.Builder;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.util.StringUtils;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -72,6 +73,13 @@ public class AuthorServiceImpl implements AuthorService {
 
     @Override
     public AuthorDTO saveNewAuthor(AuthorDTO authorDTO) {
+
+        Author exists = authorRepository.findByFirstNameAndLastName(authorDTO.getFirstName(), authorDTO.getLastName());
+        if(exists != null){
+            throw new IllegalStateException("Author with name " + authorDTO.getFirstName() + " " + authorDTO.getLastName() +
+                    " already exists");
+        }
+
         Author author = Author.builder()
                 .firstName(authorDTO.getFirstName())
                 .lastName(authorDTO.getLastName())
@@ -97,5 +105,32 @@ public class AuthorServiceImpl implements AuthorService {
                 authorId + " doesn't exist"));
 
         authorRepository.delete(author);
+    }
+
+    @Override
+    public AuthorDTO modifyAuthor(Long authorId, AuthorDTO authorDTO) throws NotFoundException {
+        Author author = authorRepository.findById(authorId).orElseThrow( () -> new NotFoundException("Author with id: " +
+                authorId + " doesn't exist"));
+
+        if(StringUtils.hasText(authorDTO.getFirstName())){
+            author.setFirstName(authorDTO.getFirstName());
+        }
+        if (StringUtils.hasText(authorDTO.getLastName())){
+            author.setLastName(authorDTO.getLastName());
+        }
+        if(authorDTO.getAge() != null){
+            author.setAge(authorDTO.getAge());
+        }
+
+        Author saved = authorRepository.save(author);
+
+        AuthorDTO dto = AuthorDTO.builder()
+                .id(saved.getId())
+                .firstName(saved.getFirstName())
+                .lastName(saved.getLastName())
+                .age(saved.getAge())
+                .build();
+
+        return dto;
     }
 }
