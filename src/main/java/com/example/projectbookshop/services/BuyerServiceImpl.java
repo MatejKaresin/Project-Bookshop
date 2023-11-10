@@ -1,6 +1,6 @@
 package com.example.projectbookshop.services;
 
-import com.example.projectbookshop.controllers.BuyerController;
+import com.example.projectbookshop.entities.Basket;
 import com.example.projectbookshop.entities.Buyer;
 import com.example.projectbookshop.exceptions.NotFoundException;
 import com.example.projectbookshop.model.BuyerDTO;
@@ -16,11 +16,13 @@ public class BuyerServiceImpl implements BuyerService {
 
 
     private final BuyerRepository buyerRepository;
+    private final BasketService basketService;
 
 
     @Autowired
-    public BuyerServiceImpl(BuyerRepository buyerRepository) {
+    public BuyerServiceImpl(BuyerRepository buyerRepository, BasketService basketService) {
         this.buyerRepository = buyerRepository;
+        this.basketService = basketService;
     }
 
     @Override
@@ -33,6 +35,7 @@ public class BuyerServiceImpl implements BuyerService {
             BuyerDTO dto = BuyerDTO.builder()
                     .id(buyer.getId())
                     .name(buyer.getName())
+                    .basketId(buyer.getBasket().getId())
                     .build();
 
             dtos.add(dto);
@@ -42,9 +45,26 @@ public class BuyerServiceImpl implements BuyerService {
     }
 
     @Override
+    public BuyerDTO getBuyerById(Long buyerId) throws NotFoundException {
+        Buyer buyer = buyerRepository.findById(buyerId).orElseThrow( () -> new NotFoundException("Buyer with id: " +
+                buyerId + " doesn't exist"));
+
+        BuyerDTO dto = BuyerDTO.builder()
+                .id(buyer.getId())
+                .name(buyer.getName())
+                .basketId(buyer.getBasket().getId())
+                .build();
+
+        return dto;
+    }
+
+    @Override
     public BuyerDTO createNewBuyer(BuyerDTO buyerDTO) {
+        Basket basket = basketService.createBasket();
+
         Buyer buyer = Buyer.builder()
                 .name(buyerDTO.getName())
+                .basket(basket)
                 .build();
 
         Buyer saved = buyerRepository.save(buyer);
@@ -52,6 +72,7 @@ public class BuyerServiceImpl implements BuyerService {
         BuyerDTO dto = BuyerDTO.builder()
                 .id(saved.getId())
                 .name(saved.getName())
+                .basketId(buyer.getBasket().getId())
                 .build();
 
         return dto;

@@ -11,4 +11,6 @@ public interface BuyerService {
     BuyerDTO createNewBuyer(BuyerDTO buyerDTO);
 
     void deleteBuyerById(Long buyerId) throws NotFoundException;
+
+    BuyerDTO getBuyerById(Long buyerId) throws NotFoundException;
 }

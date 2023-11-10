@@ -14,4 +14,6 @@ public class BuyerDTO {
 
     @NotEmpty(message = "Name can't be empty")
     private String name;
+
+    private Long basketId;
 }

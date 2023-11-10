@@ -1,9 +1,6 @@
 package com.example.projectbookshop.entities;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
+import jakarta.persistence.*;
 import lombok.*;
 
 @Getter
@@ -19,6 +16,10 @@ public class Buyer {
     private Long id;
 
     private String name;
+
+    @OneToOne(cascade = CascadeType.ALL)
+    @JoinColumn(name = "basket_id")
+    private Basket basket;
 
 
 }

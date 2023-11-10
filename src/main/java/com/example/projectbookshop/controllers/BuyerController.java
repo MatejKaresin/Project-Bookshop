@@ -26,6 +26,12 @@ public class BuyerController {
         return buyerService.listAllBuyers();
     }
 
+    @GetMapping("/buyers/{buyerId}")
+    public BuyerDTO getBuyerId(@PathVariable("buyerId") Long buyerId) throws NotFoundException {
+        return buyerService.getBuyerById(buyerId);
+
+    }
+
     @PostMapping("/buyers")
     public BuyerDTO createBuyer(@Validated @RequestBody BuyerDTO buyerDTO){
         return buyerService.createNewBuyer(buyerDTO);
