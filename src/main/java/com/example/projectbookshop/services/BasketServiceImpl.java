@@ -2,9 +2,11 @@ package com.example.projectbookshop.services;
 
 import com.example.projectbookshop.entities.Basket;
 import com.example.projectbookshop.entities.Book;
+import com.example.projectbookshop.entities.Buyer;
+import com.example.projectbookshop.exceptions.NotFoundException;
 import com.example.projectbookshop.model.BasketDTO;
 import com.example.projectbookshop.repositories.BasketRepository;
-import org.hibernate.Length;
+import com.example.projectbookshop.repositories.BuyerRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -16,10 +18,14 @@ import java.util.List;
 public class BasketServiceImpl implements BasketService {
 
     private final BasketRepository basketRepository;
+    private final BuyerRepository buyerRepository;
+    private final BookService bookService;
 
     @Autowired
-    public BasketServiceImpl(BasketRepository basketRepository) {
+    public BasketServiceImpl(BasketRepository basketRepository, BuyerRepository buyerRepository, BookService bookService) {
         this.basketRepository = basketRepository;
+        this.buyerRepository = buyerRepository;
+        this.bookService = bookService;
     }
 
 
@@ -66,5 +72,21 @@ public class BasketServiceImpl implements BasketService {
         }
 
         return totalPrice;
+    }
+
+    @Override
+    public BasketDTO getBasketForBuyer(Long buyerId) throws NotFoundException {
+        Buyer buyer = buyerRepository.findById(buyerId).orElseThrow(() -> new NotFoundException("Buyer with id: " +
+                buyerId + " doesn't exist"));
+
+        List<String> bookNames = bookService.getBookNames(buyer.getBasket().getBooks());
+
+        BasketDTO basketDTO = BasketDTO.builder()
+                .id(buyer.getBasket().getId())
+                .bookNames(bookNames)
+                .totalPrice(buyer.getBasket().getTotalPrice())
+                .build();
+
+        return basketDTO;
     }
 }

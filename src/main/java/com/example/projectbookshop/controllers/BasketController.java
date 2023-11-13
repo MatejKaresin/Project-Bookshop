@@ -1,13 +1,11 @@
 package com.example.projectbookshop.controllers;
 
+import com.example.projectbookshop.exceptions.NotFoundException;
 import com.example.projectbookshop.model.BasketDTO;
 import com.example.projectbookshop.model.BuyerDTO;
 import com.example.projectbookshop.services.BasketService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -28,5 +26,9 @@ public class BasketController {
         return basketService.listAll();
     }
 
+    @GetMapping("/buyers/{buyerId}/basket")
+    public BasketDTO getBuyersBasket(@PathVariable("buyerId") Long buyerId) throws NotFoundException {
+        return basketService.getBasketForBuyer(buyerId);
+    }
 
 }

@@ -1,6 +1,7 @@
 package com.example.projectbookshop.services;
 
 import com.example.projectbookshop.entities.Basket;
+import com.example.projectbookshop.exceptions.NotFoundException;
 import com.example.projectbookshop.model.BasketDTO;
 
 import java.math.BigDecimal;
@@ -12,4 +13,6 @@ public interface BasketService {
     Basket createBasket();
 
     BigDecimal calculateTotalPrice(Basket basket);
+
+    BasketDTO getBasketForBuyer(Long buyerId) throws NotFoundException;
 }
