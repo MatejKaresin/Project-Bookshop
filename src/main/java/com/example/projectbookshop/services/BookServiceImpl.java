@@ -109,4 +109,14 @@ public class BookServiceImpl implements BookService {
 
         return dto;
     }
+
+    @Override
+    public List<String> getBookNames(List<Book> books) {
+        List<String> bookNames = new ArrayList<>();
+        for (Book book : books){
+            bookNames.add(book.getName());
+        }
+
+        return bookNames;
+    }
 }

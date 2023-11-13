@@ -1,6 +1,7 @@
 package com.example.projectbookshop.services;
 
 
+import com.example.projectbookshop.entities.Book;
 import com.example.projectbookshop.exceptions.NotFoundException;
 import com.example.projectbookshop.model.BookDTO;
 
@@ -14,4 +15,6 @@ public interface BookService {
     void deleteBookById(Long bookId) throws NotFoundException;
 
     BookDTO modifyBookById(Long bookId, BookDTO bookDTO) throws NotFoundException;
+
+    List<String> getBookNames(List<Book> books);
 }

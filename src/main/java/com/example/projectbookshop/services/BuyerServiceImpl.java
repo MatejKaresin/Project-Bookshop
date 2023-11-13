@@ -20,14 +20,15 @@ public class BuyerServiceImpl implements BuyerService {
 
     private final BuyerRepository buyerRepository;
     private final BasketService basketService;
-
+    private final BookService bookService;
     private final BookRepository bookRepository;
 
 
     @Autowired
-    public BuyerServiceImpl(BuyerRepository buyerRepository, BasketService basketService, BookRepository bookRepository) {
+    public BuyerServiceImpl(BuyerRepository buyerRepository, BasketService basketService, BookService bookService, BookRepository bookRepository) {
         this.buyerRepository = buyerRepository;
         this.basketService = basketService;
+        this.bookService = bookService;
         this.bookRepository = bookRepository;
     }
 
@@ -38,16 +39,9 @@ public class BuyerServiceImpl implements BuyerService {
         List<BuyerDTO> dtos = new ArrayList<>();
 
         for(Buyer buyer : buyers){
-            List<String> bookNames = new ArrayList<>();
-            for (Book book : buyer.getBasket().getBooks()){
-                bookNames.add(book.getName());
-            }
+            List<String> bookNames = bookService.getBookNames(buyer.getBasket().getBooks());
 
-            BuyerDTO dto = BuyerDTO.builder()
-                    .id(buyer.getId())
-                    .name(buyer.getName())
-                    .bookNames(bookNames)
-                    .build();
+            BuyerDTO dto = getBuyerDTO(buyer, bookNames);
 
             dtos.add(dto);
         }
@@ -60,19 +54,11 @@ public class BuyerServiceImpl implements BuyerService {
         Buyer buyer = buyerRepository.findById(buyerId).orElseThrow( () -> new NotFoundException("Buyer with id: " +
                 buyerId + " doesn't exist"));
 
-        List<String> bookNames = new ArrayList<>();
-        for (Book book1 : buyer.getBasket().getBooks()){
-            bookNames.add(book1.getName());
-        }
+        List<String> bookNames = bookService.getBookNames(buyer.getBasket().getBooks());
 
-        BuyerDTO dto = BuyerDTO.builder()
-                .id(buyer.getId())
-                .name(buyer.getName())
-                .bookNames(bookNames)
-                .build();
-
-        return dto;
+        return getBuyerDTO(buyer, bookNames);
     }
+
 
     @Override
     public BuyerDTO createNewBuyer(BuyerDTO buyerDTO) {
@@ -121,18 +107,9 @@ public class BuyerServiceImpl implements BuyerService {
 
         Buyer saved = buyerRepository.save(buyer);
 
-        List<String> bookNames = new ArrayList<>();
-        for (Book book1 : saved.getBasket().getBooks()){
-            bookNames.add(book1.getName());
-        }
+        List<String> bookNames = bookService.getBookNames(saved.getBasket().getBooks());
 
-        BuyerDTO dto = BuyerDTO.builder()
-                .id(saved.getId())
-                .name(saved.getName())
-                .bookNames(bookNames)
-                .build();
-
-        return dto;
+        return getBuyerDTO(saved, bookNames);
 
     }
 
@@ -155,18 +132,18 @@ public class BuyerServiceImpl implements BuyerService {
 
         Buyer saved = buyerRepository.save(buyer);
 
-        List<String> bookNames = new ArrayList<>();
-        for (Book book1 : saved.getBasket().getBooks()){
-            bookNames.add(book1.getName());
-        }
+        List<String> bookNames = bookService.getBookNames(saved.getBasket().getBooks());
 
+        return getBuyerDTO(saved, bookNames);
+
+    }
+
+    private static BuyerDTO getBuyerDTO(Buyer buyer, List<String> bookNames) {
         BuyerDTO dto = BuyerDTO.builder()
-                .id(saved.getId())
-                .name(saved.getName())
+                .id(buyer.getId())
+                .name(buyer.getName())
                 .bookNames(bookNames)
                 .build();
-
         return dto;
-
     }
 }
