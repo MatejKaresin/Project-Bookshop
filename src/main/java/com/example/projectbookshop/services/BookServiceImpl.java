@@ -1,10 +1,12 @@
 package com.example.projectbookshop.services;
 
 import com.example.projectbookshop.entities.Author;
+import com.example.projectbookshop.entities.Basket;
 import com.example.projectbookshop.entities.Book;
 import com.example.projectbookshop.exceptions.NotFoundException;
 import com.example.projectbookshop.model.BookDTO;
 import com.example.projectbookshop.repositories.AuthorRepository;
+import com.example.projectbookshop.repositories.BasketRepository;
 import com.example.projectbookshop.repositories.BookRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -19,10 +21,13 @@ public class BookServiceImpl implements BookService {
     private final BookRepository bookRepository;
     private final AuthorRepository authorRepository;
 
+    private final BasketRepository basketRepository;
+
     @Autowired
-    public BookServiceImpl(BookRepository bookRepository, AuthorRepository authorRepository) {
+    public BookServiceImpl(BookRepository bookRepository, AuthorRepository authorRepository, BasketRepository basketRepository) {
         this.bookRepository = bookRepository;
         this.authorRepository = authorRepository;
+        this.basketRepository = basketRepository;
     }
 
     @Override
@@ -79,6 +84,19 @@ public class BookServiceImpl implements BookService {
     public void deleteBookById(Long bookId) throws NotFoundException {
         Book book = bookRepository.findById(bookId).orElseThrow( () -> new NotFoundException("Book with id: " +
                 bookId + " doesn't exist"));
+
+        List<Basket> baskets = basketRepository.findAll();
+        if(baskets == null){
+            throw new IllegalStateException("There are no baskets");
+        }
+        for(Basket basket : baskets){
+            for (Book book1 : basket.getBooks()){
+                if(book.getId() == book1.getId()){
+                    throw new IllegalStateException("First remove " + book.getName() + " from all baskets then delete");
+                }
+            }
+        }
+
         bookRepository.delete(book);
     }
 
