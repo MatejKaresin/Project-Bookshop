@@ -1,12 +1,10 @@
 package com.example.projectbookshop.entities;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
+import jakarta.persistence.*;
 import lombok.*;
 
 import java.math.BigDecimal;
+import java.util.List;
 
 @Getter
 @Setter
@@ -20,7 +18,13 @@ public class Basket {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    private String books;
+    @ManyToMany(cascade = CascadeType.ALL)
+    @JoinTable(
+            name = "basket_books",
+            joinColumns = @JoinColumn(name = "basket_id"),
+            inverseJoinColumns = @JoinColumn(name = "book_id")
+    )
+    private List<Book> books;
 
     private BigDecimal totalPrice;
 

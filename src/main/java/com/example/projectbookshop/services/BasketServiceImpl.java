@@ -1,11 +1,14 @@
 package com.example.projectbookshop.services;
 
 import com.example.projectbookshop.entities.Basket;
+import com.example.projectbookshop.entities.Book;
 import com.example.projectbookshop.model.BasketDTO;
 import com.example.projectbookshop.repositories.BasketRepository;
+import org.hibernate.Length;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -26,11 +29,20 @@ public class BasketServiceImpl implements BasketService {
 
         List<BasketDTO> dtos = new ArrayList<>();
 
+
         for(Basket basket : baskets){
+
+            BigDecimal totalPrice = BigDecimal.ZERO;
+            List<String> bookNames = new ArrayList<>();
+            for (Book book : basket.getBooks()){
+                bookNames.add(book.getName());
+                totalPrice = totalPrice.add(book.getPrice());
+            }
+
             BasketDTO dto = BasketDTO.builder()
                     .id(basket.getId())
-                    .books(basket.getBooks())
-                    .totalPrice(basket.getTotalPrice())
+                    .bookNames(bookNames)
+                    .totalPrice(totalPrice)
                     .build();
             dtos.add(dto);
         }
@@ -43,5 +55,16 @@ public class BasketServiceImpl implements BasketService {
         Basket basket = basketRepository.save(new Basket());
 
         return basket;
+    }
+
+    @Override
+    public BigDecimal calculateTotalPrice(Basket basket) {
+
+        BigDecimal totalPrice = BigDecimal.ZERO;
+        for(Book book : basket.getBooks()){
+            totalPrice = totalPrice.add(book.getPrice());
+        }
+
+        return totalPrice;
     }
 }

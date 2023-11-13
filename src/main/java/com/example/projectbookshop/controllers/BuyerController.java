@@ -42,5 +42,17 @@ public class BuyerController {
         buyerService.deleteBuyerById(buyerId);
     }
 
+    @PostMapping("/buyers/{buyerId}/addBook/{bookId}")
+    public BuyerDTO addBookToBasket(@PathVariable("buyerId") Long buyerId,
+                                    @PathVariable("bookId") Long bookId) throws NotFoundException {
+        return buyerService.addBookInBasket(buyerId, bookId);
+    }
+
+    @PostMapping("/buyers/{buyerId}/removeBook/{bookId}")
+    public BuyerDTO removeBookFromBasket(@PathVariable("buyerId") Long buyerId,
+                                         @PathVariable("bookId") Long bookId) throws NotFoundException {
+        return buyerService.removeBookInBasket(buyerId, bookId);
+    }
+
 
 }

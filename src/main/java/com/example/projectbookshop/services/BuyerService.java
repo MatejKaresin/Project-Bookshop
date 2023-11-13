@@ -13,4 +13,8 @@ public interface BuyerService {
     void deleteBuyerById(Long buyerId) throws NotFoundException;
 
     BuyerDTO getBuyerById(Long buyerId) throws NotFoundException;
+
+    BuyerDTO addBookInBasket(Long buyerId, Long bookId) throws NotFoundException;
+
+    BuyerDTO removeBookInBasket(Long buyerId, Long bookId) throws NotFoundException;
 }

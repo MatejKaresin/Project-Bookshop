@@ -3,6 +3,7 @@ package com.example.projectbookshop.model;
 import lombok.*;
 
 import java.math.BigDecimal;
+import java.util.List;
 
 @Getter
 @Setter
@@ -13,7 +14,7 @@ public class BasketDTO {
 
     private Long id;
 
-    private String books;
+    private List<String> bookNames;
 
     private BigDecimal totalPrice;
 }

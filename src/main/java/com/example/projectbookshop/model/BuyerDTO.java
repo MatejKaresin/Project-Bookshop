@@ -3,6 +3,8 @@ package com.example.projectbookshop.model;
 import jakarta.validation.constraints.NotEmpty;
 import lombok.*;
 
+import java.util.List;
+
 @Getter
 @Setter
 @NoArgsConstructor
@@ -15,5 +17,5 @@ public class BuyerDTO {
     @NotEmpty(message = "Name can't be empty")
     private String name;
 
-    private Long basketId;
+    private List<String> bookNames;
 }
