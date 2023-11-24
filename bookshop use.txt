@@ -1,0 +1,53 @@
+Znači zamišljeno je da postoje autor, knjiga, kupac i košarica.
+Autor može imati više knjiga no knjiga samo jednog autora i napravljena je OneToMany veza.
+Kupac čim se stvara ima vezu OneToOne s košaricom. Košarica se automatski stvara sa kupcem.
+U košaricu se može staviti više knjiga ali isto tako ista vrsta knjige može postojati u više košarica s toga je napravljena ManyToMany veza.
+Smišljeno je da se stvori autor i onda da se tome autoru dodaju knjige.
+Kasnije se može izlistati popis svih knjiga kako bi kupac mogao dodavati u košaricu.
+Kada se stvara kupac automatski se stvara i njegova košarica. Mogućnosti su da se dodaju knjige u košaricu preko kupca ali se i uklanjaju.
+Knjiga se može obrisati ako ih više npr nema u prodaji, ali prvo moraju biti uklonjene iz svih košarica, jer ako postoji u košarici to znači da ih još ima na stanju.
+Primjeri za dodavanje u Postman-u:
+
+Author create
+POST http://localhost:8080/api/v1/authors
+body:
+{
+    "firstName": "J.K.",
+    "lastName": "Rowling",
+    "age": 46
+}
+
+Create book to author
+POST http://localhost:8080/api/v1/authors/{authorID}/books
+POST http://localhost:8080/api/v1/authors/1/books
+body:
+{
+    "name": "Harry Potter",
+    "numberOfPages": 776,
+    "price": 10.99
+}
+
+List all books
+GET http://localhost:8080/api/v1/books
+
+Delete book by id
+DELETE http://localhost:8080/api/v1/books/{bookId}
+
+Create buyer
+POST http://localhost:8080/api/v1/buyers
+body:
+{
+    "name": "Franja"
+}
+
+Add a book in basket of specified buyer
+POST http://localhost:8080/api/v1/buyers/{buyerId}/addBook/{bookId}
+
+Remove a book from basket of buyer
+POST http://localhost:8080/api/v1/buyers/{buyerId}/removeBook/{bookId}
+
+List all baskets
+GET POST http://localhost:8080/api/v1/baskets
+
+Get specified buyer basket
+GET POST http://localhost:8080/api/v1/buyers/{buyerId}/basket
