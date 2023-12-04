@@ -14,5 +14,5 @@ public interface BasketService {
 
     BigDecimal calculateTotalPrice(Basket basket);
 
-    BasketDTO getBasketForBuyer(Long buyerId) throws NotFoundException;
+    BasketDTO getBasketForUser(Long userId) throws NotFoundException;
 }

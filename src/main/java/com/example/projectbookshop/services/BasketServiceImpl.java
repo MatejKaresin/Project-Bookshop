@@ -2,11 +2,11 @@ package com.example.projectbookshop.services;
 
 import com.example.projectbookshop.entities.Basket;
 import com.example.projectbookshop.entities.Book;
-import com.example.projectbookshop.entities.Buyer;
+import com.example.projectbookshop.entities.BookshopUser;
 import com.example.projectbookshop.exceptions.NotFoundException;
 import com.example.projectbookshop.model.BasketDTO;
 import com.example.projectbookshop.repositories.BasketRepository;
-import com.example.projectbookshop.repositories.BuyerRepository;
+import com.example.projectbookshop.repositories.BookshopUserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -18,13 +18,13 @@ import java.util.List;
 public class BasketServiceImpl implements BasketService {
 
     private final BasketRepository basketRepository;
-    private final BuyerRepository buyerRepository;
+    private final BookshopUserRepository bookshopUserRepository;
     private final BookService bookService;
 
     @Autowired
-    public BasketServiceImpl(BasketRepository basketRepository, BuyerRepository buyerRepository, BookService bookService) {
+    public BasketServiceImpl(BasketRepository basketRepository, BookshopUserRepository bookshopUserRepository, BookService bookService) {
         this.basketRepository = basketRepository;
-        this.buyerRepository = buyerRepository;
+        this.bookshopUserRepository = bookshopUserRepository;
         this.bookService = bookService;
     }
 
@@ -75,16 +75,16 @@ public class BasketServiceImpl implements BasketService {
     }
 
     @Override
-    public BasketDTO getBasketForBuyer(Long buyerId) throws NotFoundException {
-        Buyer buyer = buyerRepository.findById(buyerId).orElseThrow(() -> new NotFoundException("Buyer with id: " +
-                buyerId + " doesn't exist"));
+    public BasketDTO getBasketForUser(Long userId) throws NotFoundException {
+        BookshopUser bookshopUser = bookshopUserRepository.findById(userId).orElseThrow(() -> new NotFoundException("BookshopUser with id: " +
+                userId + " doesn't exist"));
 
-        List<String> bookNames = bookService.getBookNames(buyer.getBasket().getBooks());
+        List<String> bookNames = bookService.getBookNames(bookshopUser.getBasket().getBooks());
 
         BasketDTO basketDTO = BasketDTO.builder()
-                .id(buyer.getBasket().getId())
+                .id(bookshopUser.getBasket().getId())
                 .bookNames(bookNames)
-                .totalPrice(buyer.getBasket().getTotalPrice())
+                .totalPrice(bookshopUser.getBasket().getTotalPrice())
                 .build();
 
         return basketDTO;

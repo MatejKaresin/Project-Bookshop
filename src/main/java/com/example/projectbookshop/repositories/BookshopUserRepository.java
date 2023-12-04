@@ -1,9 +1,9 @@
 package com.example.projectbookshop.repositories;
 
-import com.example.projectbookshop.entities.Buyer;
+import com.example.projectbookshop.entities.BookshopUser;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
 @Repository
-public interface BuyerRepository extends JpaRepository<Buyer, Long> {
+public interface BookshopUserRepository extends JpaRepository<BookshopUser, Long> {
 }
