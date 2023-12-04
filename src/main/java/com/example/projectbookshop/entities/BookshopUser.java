@@ -15,8 +15,10 @@ public class BookshopUser {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    private String name;
+    private String nickName;
 
+    private String password;
+    private String email;
     @OneToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "basket_id")
     private Basket basket;

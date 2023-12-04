@@ -5,6 +5,8 @@ import com.example.projectbookshop.entities.Book;
 import com.example.projectbookshop.entities.BookshopUser;
 import com.example.projectbookshop.exceptions.NotFoundException;
 import com.example.projectbookshop.model.BookshopUserDTO;
+import com.example.projectbookshop.model.BookshopUserLoginDTO;
+import com.example.projectbookshop.model.BookshopUserSingupDTO;
 import com.example.projectbookshop.repositories.BookRepository;
 import com.example.projectbookshop.repositories.BookshopUserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -65,7 +67,7 @@ public class BookshopUserServiceImpl implements BookshopUserService {
         Basket basket = basketService.createBasket();
 
         BookshopUser bookshopUser = BookshopUser.builder()
-                .name(bookshopUserDTO.getName())
+                .nickName(bookshopUserDTO.getNickName())
                 .basket(basket)
                 .build();
 
@@ -74,7 +76,7 @@ public class BookshopUserServiceImpl implements BookshopUserService {
 
         BookshopUserDTO dto = BookshopUserDTO.builder()
                 .id(saved.getId())
-                .name(saved.getName())
+                .nickName(saved.getNickName())
                 .build();
 
         return dto;
@@ -138,10 +140,68 @@ public class BookshopUserServiceImpl implements BookshopUserService {
 
     }
 
+
+    @Override
+    public BookshopUser signupUser(BookshopUserSingupDTO singupDTO) {
+        List<BookshopUser> bookshopUsers = bookshopUserRepository.findAll();
+
+        checkEmail(singupDTO.getEmail());
+        checkPassword(singupDTO.getPassword(), singupDTO.getRepeatedPassword());
+
+        for (BookshopUser bookshopUser : bookshopUsers) {
+            if(singupDTO.getNickName().equals(bookshopUser.getNickName())) {
+                throw new IllegalStateException("That nickname is taken");
+            } if(singupDTO.getEmail().equals(bookshopUser.getEmail())) {
+                throw new IllegalStateException("That email is taken");
+            }
+        }
+
+        Basket basket = basketService.createBasket();
+
+        BookshopUser bookshopUser = BookshopUser.builder()
+                .nickName(singupDTO.getNickName())
+                .email(singupDTO.getEmail())
+                .password(singupDTO.getPassword())
+                .basket(basket)
+                .build();
+
+        BookshopUser saved = bookshopUserRepository.save(bookshopUser);
+
+        return saved;
+
+    }
+
+    @Override
+    public BookshopUserDTO loginUser(BookshopUserLoginDTO loginDTO) {
+        BookshopUser bookshopUser = bookshopUserRepository.findByNickNameAndPassword(loginDTO.getNickName(), loginDTO.getPassword());
+
+        if(bookshopUser == null) {
+            throw new IllegalStateException("User not found");
+        }
+
+        return BookshopUserDTO.builder()
+                .id(bookshopUser.getId())
+                .nickName(bookshopUser.getNickName())
+                .bookNames(bookService.getBookNames(bookshopUser.getBasket().getBooks()))
+                .build();
+    }
+
+    private void checkEmail(String email) {
+        if(!email.contains("@gmail.com")){
+            throw new IllegalStateException("Email must contain @gmail.com");
+        }
+    }
+
+    private void checkPassword(String password, String repeatedPassword) {
+        if(!password.equals(repeatedPassword)) {
+            throw new IllegalStateException("Passwords don't match");
+        }
+    }
+
     private static BookshopUserDTO getUserDTO(BookshopUser bookshopUser, List<String> bookNames) {
         BookshopUserDTO dto = BookshopUserDTO.builder()
                 .id(bookshopUser.getId())
-                .name(bookshopUser.getName())
+                .nickName(bookshopUser.getNickName())
                 .bookNames(bookNames)
                 .build();
         return dto;

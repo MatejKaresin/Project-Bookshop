@@ -1,7 +1,10 @@
 package com.example.projectbookshop.controllers;
 
+import com.example.projectbookshop.entities.BookshopUser;
 import com.example.projectbookshop.exceptions.NotFoundException;
 import com.example.projectbookshop.model.BookshopUserDTO;
+import com.example.projectbookshop.model.BookshopUserLoginDTO;
+import com.example.projectbookshop.model.BookshopUserSingupDTO;
 import com.example.projectbookshop.services.BookshopUserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
@@ -54,5 +57,14 @@ public class BookshopUserController {
         return bookshopUserService.removeBookInBasket(userId, bookId);
     }
 
+    @PostMapping("/users/signup")
+    public BookshopUser registration(@Validated @RequestBody BookshopUserSingupDTO singupDTO){
+        return bookshopUserService.signupUser(singupDTO);
+    }
+
+    @PostMapping("/users/login")
+    public BookshopUserDTO login(@Validated @RequestBody BookshopUserLoginDTO loginDTO) {
+        return bookshopUserService.loginUser(loginDTO);
+    }
 
 }
