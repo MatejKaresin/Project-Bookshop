@@ -10,6 +10,8 @@ import com.example.projectbookshop.model.BookshopUserSingupDTO;
 import com.example.projectbookshop.repositories.BookRepository;
 import com.example.projectbookshop.repositories.BookshopUserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
@@ -64,6 +66,12 @@ public class BookshopUserServiceImpl implements BookshopUserService {
 
     @Override
     public BookshopUserDTO createNewBookshopUser(BookshopUserDTO bookshopUserDTO) {
+        BookshopUser existing = bookshopUserRepository.findByNickName(bookshopUserDTO.getNickName());
+
+        if(existing != null) {
+            throw new IllegalStateException("User by that name already exists");
+        }
+
         Basket basket = basketService.createBasket();
 
         BookshopUser bookshopUser = BookshopUser.builder()
@@ -142,7 +150,7 @@ public class BookshopUserServiceImpl implements BookshopUserService {
 
 
     @Override
-    public BookshopUser signupUser(BookshopUserSingupDTO singupDTO) {
+    public ResponseEntity<String> signupUser(BookshopUserSingupDTO singupDTO) {
         List<BookshopUser> bookshopUsers = bookshopUserRepository.findAll();
 
         checkEmail(singupDTO.getEmail());
@@ -162,28 +170,50 @@ public class BookshopUserServiceImpl implements BookshopUserService {
                 .nickName(singupDTO.getNickName())
                 .email(singupDTO.getEmail())
                 .password(singupDTO.getPassword())
+                .logged(false)
                 .basket(basket)
                 .build();
 
-        BookshopUser saved = bookshopUserRepository.save(bookshopUser);
+        bookshopUserRepository.save(bookshopUser);
 
-        return saved;
+        String message = "Successful Signup.";
+
+        return new ResponseEntity<>(message, HttpStatus.OK);
 
     }
 
     @Override
-    public BookshopUserDTO loginUser(BookshopUserLoginDTO loginDTO) {
+    public ResponseEntity<String> loginUser(BookshopUserLoginDTO loginDTO) {
         BookshopUser bookshopUser = bookshopUserRepository.findByNickNameAndPassword(loginDTO.getNickName(), loginDTO.getPassword());
 
         if(bookshopUser == null) {
             throw new IllegalStateException("User not found");
         }
 
-        return BookshopUserDTO.builder()
-                .id(bookshopUser.getId())
-                .nickName(bookshopUser.getNickName())
-                .bookNames(bookService.getBookNames(bookshopUser.getBasket().getBooks()))
-                .build();
+        bookshopUser.setLogged(true);
+        bookshopUserRepository.save(bookshopUser);
+
+        String message = "Successful Login.";
+
+        return new ResponseEntity<>(message, HttpStatus.OK);
+    }
+
+    @Override
+    public ResponseEntity<String> logoutUser(BookshopUserLoginDTO loginDTO) {
+        BookshopUser bookshopUser = bookshopUserRepository.findByNickNameAndPassword(loginDTO.getNickName(), loginDTO.getPassword());
+
+        if(bookshopUser == null) {
+            throw new IllegalStateException("You aren't logged in");
+        }
+
+        if(bookshopUser.getLogged()) {
+            bookshopUser.setLogged(false);
+            bookshopUserRepository.save(bookshopUser);
+        } else {
+            return new  ResponseEntity<>("You aren't logged in", HttpStatus.BAD_REQUEST);
+        }
+        return new ResponseEntity<>("Logout successful", HttpStatus.OK);
+
     }
 
     private void checkEmail(String email) {

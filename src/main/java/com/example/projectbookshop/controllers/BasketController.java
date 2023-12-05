@@ -25,9 +25,9 @@ public class BasketController {
         return basketService.listAll();
     }
 
-    @GetMapping("/buyers/{buyerId}/basket")
-    public BasketDTO getBuyersBasket(@PathVariable("buyerId") Long buyerId) throws NotFoundException {
-        return basketService.getBasketForUser(buyerId);
+    @GetMapping("/users/{userId}/basket")
+    public BasketDTO getUsersBasket(@PathVariable("userId") Long userId) throws NotFoundException {
+        return basketService.getBasketForUser(userId);
     }
 
 }

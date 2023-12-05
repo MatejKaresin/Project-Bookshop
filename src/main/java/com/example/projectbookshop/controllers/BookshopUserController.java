@@ -7,6 +7,7 @@ import com.example.projectbookshop.model.BookshopUserLoginDTO;
 import com.example.projectbookshop.model.BookshopUserSingupDTO;
 import com.example.projectbookshop.services.BookshopUserService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
@@ -58,13 +59,18 @@ public class BookshopUserController {
     }
 
     @PostMapping("/users/signup")
-    public BookshopUser registration(@Validated @RequestBody BookshopUserSingupDTO singupDTO){
+    public ResponseEntity<String> registration(@Validated @RequestBody BookshopUserSingupDTO singupDTO){
         return bookshopUserService.signupUser(singupDTO);
     }
 
     @PostMapping("/users/login")
-    public BookshopUserDTO login(@Validated @RequestBody BookshopUserLoginDTO loginDTO) {
+    public ResponseEntity<String> login(@Validated @RequestBody BookshopUserLoginDTO loginDTO) {
         return bookshopUserService.loginUser(loginDTO);
+    }
+
+    @PostMapping("/users/logout")
+    public ResponseEntity<String> logout(@Validated @RequestBody BookshopUserLoginDTO loginDTO) {
+        return bookshopUserService.logoutUser(loginDTO);
     }
 
 }
