@@ -5,6 +5,7 @@ import com.example.projectbookshop.entities.Book;
 import com.example.projectbookshop.entities.BookshopUser;
 import com.example.projectbookshop.exceptions.NotFoundException;
 import com.example.projectbookshop.model.BookshopUserDTO;
+import com.example.projectbookshop.model.BookshopUserFEDTO;
 import com.example.projectbookshop.model.BookshopUserLoginDTO;
 import com.example.projectbookshop.model.BookshopUserSingupDTO;
 import com.example.projectbookshop.repositories.BookRepository;
@@ -183,19 +184,26 @@ public class BookshopUserServiceImpl implements BookshopUserService {
     }
 
     @Override
-    public ResponseEntity<String> loginUser(BookshopUserLoginDTO loginDTO) {
+    public BookshopUserFEDTO loginUser(BookshopUserLoginDTO loginDTO) {
         BookshopUser bookshopUser = bookshopUserRepository.findByNickNameAndPassword(loginDTO.getNickName(), loginDTO.getPassword());
 
         if(bookshopUser == null) {
             throw new IllegalStateException("User not found");
         }
 
-        bookshopUser.setLogged(true);
-        bookshopUserRepository.save(bookshopUser);
+        if(!bookshopUser.getLogged()) {
+            bookshopUser.setLogged(true);
+            bookshopUserRepository.save(bookshopUser);
+        } else {
+            throw new IllegalStateException("User already logged");
+        }
 
-        String message = "Successful Login.";
 
-        return new ResponseEntity<>(message, HttpStatus.OK);
+        return BookshopUserFEDTO.builder()
+                .id(bookshopUser.getId())
+                .nickName(bookshopUser.getNickName())
+                .logged(bookshopUser.getLogged())
+                .build();
     }
 
     @Override

@@ -3,6 +3,7 @@ package com.example.projectbookshop.services;
 import com.example.projectbookshop.entities.BookshopUser;
 import com.example.projectbookshop.exceptions.NotFoundException;
 import com.example.projectbookshop.model.BookshopUserDTO;
+import com.example.projectbookshop.model.BookshopUserFEDTO;
 import com.example.projectbookshop.model.BookshopUserLoginDTO;
 import com.example.projectbookshop.model.BookshopUserSingupDTO;
 import org.springframework.http.ResponseEntity;
@@ -24,7 +25,7 @@ public interface BookshopUserService {
 
     ResponseEntity<String> signupUser(BookshopUserSingupDTO singupDTO);
 
-    ResponseEntity<String> loginUser(BookshopUserLoginDTO loginDTO);
+    BookshopUserFEDTO loginUser(BookshopUserLoginDTO loginDTO);
 
     ResponseEntity<String> logoutUser(BookshopUserLoginDTO loginDTO);
 }
