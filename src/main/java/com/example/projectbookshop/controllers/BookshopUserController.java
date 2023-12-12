@@ -1,9 +1,8 @@
 package com.example.projectbookshop.controllers;
 
-import com.example.projectbookshop.entities.BookshopUser;
 import com.example.projectbookshop.exceptions.NotFoundException;
 import com.example.projectbookshop.model.BookshopUserDTO;
-import com.example.projectbookshop.model.BookshopUserFEDTO;
+import com.example.projectbookshop.model.BookshopUserDTOForFrontEnd;
 import com.example.projectbookshop.model.BookshopUserLoginDTO;
 import com.example.projectbookshop.model.BookshopUserSingupDTO;
 import com.example.projectbookshop.services.BookshopUserService;
@@ -65,12 +64,12 @@ public class BookshopUserController {
     }
 
     @PostMapping("/users/login")
-    public BookshopUserFEDTO login(@Validated @RequestBody BookshopUserLoginDTO loginDTO) {
+    public BookshopUserDTOForFrontEnd login(@Validated @RequestBody BookshopUserLoginDTO loginDTO) {
         return bookshopUserService.loginUser(loginDTO);
     }
 
     @PostMapping("/users/logout")
-    public ResponseEntity<String> logout(@Validated @RequestBody BookshopUserLoginDTO loginDTO) {
+    public BookshopUserDTOForFrontEnd logout(@Validated @RequestBody BookshopUserLoginDTO loginDTO) {
         return bookshopUserService.logoutUser(loginDTO);
     }
 

@@ -8,11 +8,12 @@ import lombok.*;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class BookshopUserFEDTO {
+public class BookshopUserDTOForFrontEnd {
 
     private Long id;
 
     @NotEmpty(message = "Nickname can't be empty")
     private String nickName;
+    private String password;
     private Boolean logged;
 }

@@ -17,4 +17,6 @@ public interface BookService {
     BookDTO modifyBookById(Long bookId, BookDTO bookDTO) throws NotFoundException;
 
     List<String> getBookNames(List<Book> books);
+
+    List<Long> getBookIds(List<Book> books);
 }

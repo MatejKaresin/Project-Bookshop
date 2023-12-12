@@ -137,4 +137,14 @@ public class BookServiceImpl implements BookService {
 
         return bookNames;
     }
+
+    @Override
+    public List<Long> getBookIds(List<Book> books) {
+        List<Long> bookIds = new ArrayList<>();
+        for(Book book : books) {
+            bookIds.add(book.getId());
+        }
+
+        return bookIds;
+    }
 }

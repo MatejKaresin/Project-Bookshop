@@ -5,7 +5,7 @@ import com.example.projectbookshop.entities.Book;
 import com.example.projectbookshop.entities.BookshopUser;
 import com.example.projectbookshop.exceptions.NotFoundException;
 import com.example.projectbookshop.model.BookshopUserDTO;
-import com.example.projectbookshop.model.BookshopUserFEDTO;
+import com.example.projectbookshop.model.BookshopUserDTOForFrontEnd;
 import com.example.projectbookshop.model.BookshopUserLoginDTO;
 import com.example.projectbookshop.model.BookshopUserSingupDTO;
 import com.example.projectbookshop.repositories.BookRepository;
@@ -184,7 +184,7 @@ public class BookshopUserServiceImpl implements BookshopUserService {
     }
 
     @Override
-    public BookshopUserFEDTO loginUser(BookshopUserLoginDTO loginDTO) {
+    public BookshopUserDTOForFrontEnd loginUser(BookshopUserLoginDTO loginDTO) {
         BookshopUser bookshopUser = bookshopUserRepository.findByNickNameAndPassword(loginDTO.getNickName(), loginDTO.getPassword());
 
         if(bookshopUser == null) {
@@ -199,15 +199,16 @@ public class BookshopUserServiceImpl implements BookshopUserService {
         }
 
 
-        return BookshopUserFEDTO.builder()
+        return BookshopUserDTOForFrontEnd.builder()
                 .id(bookshopUser.getId())
                 .nickName(bookshopUser.getNickName())
+                .password(bookshopUser.getPassword())
                 .logged(bookshopUser.getLogged())
                 .build();
     }
 
     @Override
-    public ResponseEntity<String> logoutUser(BookshopUserLoginDTO loginDTO) {
+    public BookshopUserDTOForFrontEnd logoutUser(BookshopUserLoginDTO loginDTO) {
         BookshopUser bookshopUser = bookshopUserRepository.findByNickNameAndPassword(loginDTO.getNickName(), loginDTO.getPassword());
 
         if(bookshopUser == null) {
@@ -218,9 +219,14 @@ public class BookshopUserServiceImpl implements BookshopUserService {
             bookshopUser.setLogged(false);
             bookshopUserRepository.save(bookshopUser);
         } else {
-            return new  ResponseEntity<>("You aren't logged in", HttpStatus.BAD_REQUEST);
+            throw  new IllegalStateException("User isn't logged");
         }
-        return new ResponseEntity<>("Logout successful", HttpStatus.OK);
+        return BookshopUserDTOForFrontEnd.builder()
+                .nickName(bookshopUser.getNickName())
+                .password(bookshopUser.getPassword())
+                .id(bookshopUser.getId())
+                .logged(bookshopUser.getLogged())
+                .build();
 
     }
 

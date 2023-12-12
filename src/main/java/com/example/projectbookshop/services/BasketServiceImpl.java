@@ -5,6 +5,7 @@ import com.example.projectbookshop.entities.Book;
 import com.example.projectbookshop.entities.BookshopUser;
 import com.example.projectbookshop.exceptions.NotFoundException;
 import com.example.projectbookshop.model.BasketDTO;
+import com.example.projectbookshop.model.BasketDTOForFrontend;
 import com.example.projectbookshop.repositories.BasketRepository;
 import com.example.projectbookshop.repositories.BookshopUserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -75,7 +76,7 @@ public class BasketServiceImpl implements BasketService {
     }
 
     @Override
-    public BasketDTO getBasketForUser(Long userId) throws NotFoundException {
+    public BasketDTO getCheckoutForUser(Long userId) throws NotFoundException {
         BookshopUser bookshopUser = bookshopUserRepository.findById(userId).orElseThrow(() -> new NotFoundException("BookshopUser with id: " +
                 userId + " doesn't exist"));
 
@@ -88,5 +89,20 @@ public class BasketServiceImpl implements BasketService {
                 .build();
 
         return basketDTO;
+    }
+
+    @Override
+    public BasketDTOForFrontend getBasketForUser(Long userId) throws NotFoundException {
+        BookshopUser bookshopUser = bookshopUserRepository.findById(userId).orElseThrow(() -> new NotFoundException("BookshopUser with id: " +
+                userId + " doesn't exist"));
+
+        List<Long> bookIds = bookService.getBookIds(bookshopUser.getBasket().getBooks());
+
+        BasketDTOForFrontend basketDTOForFrontend = BasketDTOForFrontend.builder()
+                .id(bookshopUser.getBasket().getId())
+                .bookIds(bookIds)
+                .build();
+
+        return basketDTOForFrontend;
     }
 }
